@@ -44,6 +44,7 @@
       "expo-web-browser"
     ],
     "experiments": {
+      "baseUrl": "/area55",
       "typedRoutes": true
     }
   }
