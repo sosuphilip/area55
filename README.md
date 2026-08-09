@@ -4,6 +4,8 @@ A sport-agnostic coaching app. Coaches model athletes by **key performance metri
 
 Built with **Expo SDK 54 (React Native + TypeScript)**, **expo-router**, and **Supabase** (Postgres + Auth + Row-Level Security).
 
+> 🖥️ **Live demo:** https://sosuphilip.github.io/area55/ — sign in with `demo@area55.com` / `area55demo`
+
 ## Features
 
 - **Coach accounts** — email/password sign-up; every coach's data is isolated via RLS
