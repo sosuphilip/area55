@@ -18,6 +18,7 @@ import { useMetrics } from '@/hooks/useMetrics';
 import { useTheme } from '@/hooks/use-theme';
 import { toChartData } from '@/utils/chartData';
 import { formatDateLong, formatPct, formatValue } from '@/utils/format';
+import { goalProgress } from '@/utils/goalProgress';
 import { compositeScore, perMetricScore, scoreDelta30d } from '@/utils/score';
 import { filterByRange, movingAverage, RANGE_KEYS, summarizeEntries, type RangeKey } from '@/utils/stats';
 import { computeTrend } from '@/utils/trend';
@@ -103,6 +104,13 @@ export default function AnalyticsScreen() {
     [goals, metric],
   );
 
+  // Progress toward the selected metric's active goal — what the big ring shows.
+  // Null when there's no active goal (or no data), in which case the ring is hidden.
+  const goalRing = useMemo(
+    () => (goal && metric ? goalProgress(metricEntries, goal.target_value, metric.higher_is_better) : null),
+    [goal, metric, metricEntries],
+  );
+
   const changeBetter =
     summary?.changePct != null &&
     (summary.changePct > 0) === Boolean(metric?.higher_is_better) &&
@@ -116,7 +124,6 @@ export default function AnalyticsScreen() {
     <Screen scroll={false} padded={false}>
       <View style={styles.container}>
         <ScreenHeader title="Analytics" subtitle={athlete?.name} showBack />
-        <AthleteNav id={id} active="analytics" />
 
         {!metrics || metrics.length === 0 ? (
           <EmptyState
@@ -130,34 +137,58 @@ export default function AnalyticsScreen() {
             contentContainerStyle={styles.body}
             showsVerticalScrollIndicator={false}
           >
+            <AthleteNav id={id} active="analytics" />
             {performance ? (
               <Card style={styles.goalCard}>
                 <View style={styles.perfTop}>
-                  <ScoreRing score={performance.composite} size={72} />
-                  <View style={styles.perfSummary}>
-                    <Text style={[styles.goalTitle, { color: theme.text }]}>Performance</Text>
-                    <Text style={[styles.perfComposite, { color: theme.text }]}>
-                      {performance.composite != null ? `${performance.composite}/100` : 'No data yet'}
-                    </Text>
-                    {performance.compositeDelta != null ? (
-                      <Text
-                        style={[
-                          styles.perfDelta,
-                          {
-                            color:
-                              performance.compositeDelta >= 0 ? theme.positive : theme.negative,
-                          },
-                        ]}
-                      >
-                        {performance.compositeDelta >= 0 ? '+' : ''}
-                        {performance.compositeDelta} pts · 30d
+                  {goalRing != null ? (
+                    <>
+                      <ScoreRing score={goalRing} size={72} />
+                      <View style={styles.perfSummary}>
+                        <Text style={[styles.goalTitle, { color: theme.text }]}>Goal progress</Text>
+                        <Text style={[styles.perfComposite, { color: theme.text }]}>
+                          {goalRing}%
+                        </Text>
+                        <Text
+                          style={[styles.perfDelta, { color: theme.textSecondary }]}
+                          numberOfLines={1}
+                        >
+                          toward {metric?.name}
+                          {goal ? ` · target ${formatValue(goal.target_value, metric?.unit)}` : ''}
+                        </Text>
+                        {goal?.deadline ? (
+                          <Text style={[styles.perfDelta, { color: theme.textSecondary }]}>
+                            by {formatDateLong(goal.deadline)}
+                          </Text>
+                        ) : null}
+                      </View>
+                    </>
+                  ) : (
+                    <View style={styles.perfSummary}>
+                      <Text style={[styles.goalTitle, { color: theme.text }]}>Performance</Text>
+                      <Text style={[styles.perfComposite, { color: theme.text }]}>
+                        {performance.composite != null ? `${performance.composite}/100` : 'No data yet'}
                       </Text>
-                    ) : (
-                      <Text style={[styles.perfDelta, { color: theme.textSecondary }]}>
-                        No 30-day trend yet
-                      </Text>
-                    )}
-                  </View>
+                      {performance.compositeDelta != null ? (
+                        <Text
+                          style={[
+                            styles.perfDelta,
+                            {
+                              color:
+                                performance.compositeDelta >= 0 ? theme.positive : theme.negative,
+                            },
+                          ]}
+                        >
+                          {performance.compositeDelta >= 0 ? '+' : ''}
+                          {performance.compositeDelta} pts · 30d
+                        </Text>
+                      ) : (
+                        <Text style={[styles.perfDelta, { color: theme.textSecondary }]}>
+                          No 30-day trend yet
+                        </Text>
+                      )}
+                    </View>
+                  )}
                 </View>
                 <View style={styles.perfRows}>
                   {performance.rows.map(({ metric: m, score, delta }) => (

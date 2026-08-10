@@ -112,7 +112,6 @@ export default function AthleteOverviewScreen() {
             </View>
           }
         />
-        <AthleteNav id={id} active="overview" />
 
         {isLoading || !athlete ? (
           <Spinner label="Loading…" />
@@ -123,6 +122,7 @@ export default function AthleteOverviewScreen() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
+            <AthleteNav id={id} active="overview" />
             {/* Identity */}
             <Card style={styles.identity}>
               <View style={styles.identityRow}>

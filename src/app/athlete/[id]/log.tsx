@@ -97,7 +97,6 @@ export default function LogScreen() {
     <Screen scroll={false} padded={false}>
       <View style={styles.container}>
         <ScreenHeader title="Log values" subtitle={athlete?.name} showBack />
-        <AthleteNav id={id} active="log" />
 
         {isLoading ? (
           <Spinner label="Loading…" />
@@ -108,6 +107,7 @@ export default function LogScreen() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
+            <AthleteNav id={id} active="log" />
             <Card>
               <SectionHeader title="Add value" />
               {!metrics || metrics.length === 0 ? (

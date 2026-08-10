@@ -1,5 +1,5 @@
 import { Link, type Href } from 'expo-router';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -15,14 +15,15 @@ const SECTIONS: { key: AthleteSection; label: string }[] = [
   { key: 'goals', label: 'Goals' },
 ];
 
+/**
+ * Plain-text section tabs for an athlete's screens. No pills/backgrounds — the
+ * active section is just accent-colored text with a thin underline. Rendered
+ * inside each screen's scroll content so it scrolls away with the page.
+ */
 export function AthleteNav({ id, active }: { id: string; active: AthleteSection }) {
   const theme = useTheme();
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.content}
-    >
+    <View style={styles.wrap}>
       {SECTIONS.map((section) => {
         const href = (
           section.key === 'overview'
@@ -31,31 +32,39 @@ export function AthleteNav({ id, active }: { id: string; active: AthleteSection 
         ) as Href;
         const selected = section.key === active;
         return (
-          <Link
-            key={section.key}
-            href={href}
-            style={[
-              styles.seg,
-              { backgroundColor: selected ? theme.accent : theme.backgroundElement },
-            ]}
-          >
+          <Link key={section.key} href={href} style={styles.link}>
             <Text
               style={[
                 styles.label,
-                { color: selected ? theme.accentContrast : theme.textSecondary },
+                { color: selected ? theme.accent : theme.textSecondary },
+                selected && styles.activeLabel,
               ]}
             >
               {section.label}
             </Text>
+            <View
+              style={[
+                styles.indicator,
+                { backgroundColor: selected ? theme.accent : 'transparent' },
+              ]}
+            />
           </Link>
         );
       })}
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { gap: Spacing.two, paddingHorizontal: Spacing.three, paddingVertical: Spacing.one },
-  seg: { borderRadius: 999, paddingHorizontal: Spacing.three, paddingVertical: Spacing.two },
+  wrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    rowGap: Spacing.one,
+    columnGap: Spacing.three,
+  },
+  link: { alignItems: 'center', paddingVertical: Spacing.one, paddingHorizontal: 1 },
   label: { fontSize: 13, fontWeight: '600' },
+  activeLabel: { fontWeight: '800' },
+  // Thin underline that always reserves space so the tabs don't jump height.
+  indicator: { height: 2, borderRadius: 2, marginTop: 3, width: '100%' },
 });

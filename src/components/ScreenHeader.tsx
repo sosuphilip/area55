@@ -18,9 +18,20 @@ export function ScreenHeader({ title, subtitle, showBack, right }: ScreenHeaderP
   return (
     <View style={styles.row}>
       {showBack ? (
-        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.back} accessibilityRole="button">
-          <Ionicons name="chevron-back" size={26} color={theme.text} />
-        </Pressable>
+        <>
+          <Pressable onPress={() => router.back()} hitSlop={8} style={styles.back} accessibilityRole="button">
+            <Ionicons name="chevron-back" size={26} color={theme.text} />
+          </Pressable>
+          <Pressable
+            onPress={() => router.dismissTo('/')}
+            hitSlop={8}
+            style={styles.back}
+            accessibilityRole="button"
+            accessibilityLabel="Go home"
+          >
+            <Ionicons name="home" size={22} color={theme.text} />
+          </Pressable>
+        </>
       ) : null}
       <View style={styles.titles}>
         <Text style={[styles.title, { color: theme.text }]} numberOfLines={1}>

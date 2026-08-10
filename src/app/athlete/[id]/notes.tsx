@@ -75,7 +75,6 @@ export default function NotesScreen() {
     <Screen scroll={false} padded={false}>
       <View style={styles.container}>
         <ScreenHeader title="Notes" subtitle={athlete?.name} showBack />
-        <AthleteNav id={id} active="notes" />
 
         {isLoading ? (
           <Spinner label="Loading…" />
@@ -85,6 +84,7 @@ export default function NotesScreen() {
             contentContainerStyle={styles.body}
             showsVerticalScrollIndicator={false}
           >
+            <AthleteNav id={id} active="notes" />
             <Card>
               <SectionHeader title="Add session note" />
               <View style={styles.form}>

@@ -4,10 +4,12 @@ import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { ThemedView } from '@/components/themed-view';
 import { AuthProvider, useAuth } from '@/context/auth';
+import { useTheme } from '@/hooks/use-theme';
 import { queryClient } from '@/lib/queryClient';
 
 function RootNavigator() {
   const { session, isLoading } = useAuth();
+  const theme = useTheme();
 
   if (isLoading) {
     // Wait for the session check before mounting the stack so there's no
@@ -20,7 +22,13 @@ function RootNavigator() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        // Match the app background so transitions don't flash white behind screens.
+        contentStyle: { backgroundColor: theme.background },
+      }}
+    >
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="athlete/new" />

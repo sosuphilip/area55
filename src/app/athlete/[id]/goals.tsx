@@ -96,7 +96,6 @@ export default function GoalsScreen() {
     <Screen scroll={false} padded={false}>
       <View style={styles.container}>
         <ScreenHeader title="Goals" subtitle={athlete?.name} showBack />
-        <AthleteNav id={id} active="goals" />
 
         {isLoading ? (
           <Spinner label="Loading…" />
@@ -107,6 +106,7 @@ export default function GoalsScreen() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
+            <AthleteNav id={id} active="goals" />
             <Card>
               <SectionHeader title="New goal" />
               {!metrics || metrics.length === 0 ? (
