@@ -7,3 +7,18 @@
   --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
 }
+
+/* Match the document to the app theme so route transitions and overscroll
+   never flash the browser's default white page behind the navigator.
+   Mirrors Colors.light/dark.background in src/constants/theme.ts. */
+html,
+body {
+  background-color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  html,
+  body {
+    background-color: #000000;
+  }
+}
