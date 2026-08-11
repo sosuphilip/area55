@@ -1,11 +1,31 @@
 import { QueryClientProvider } from '@tanstack/react-query';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { ThemedView } from '@/components/themed-view';
+import { Colors } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/context/auth';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useTheme } from '@/hooks/use-theme';
 import { queryClient } from '@/lib/queryClient';
+
+function buildNavigationTheme(scheme: 'light' | 'dark') {
+  const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
+  const c = Colors[scheme];
+  return {
+    ...base,
+    colors: {
+      ...base.colors,
+      primary: c.accent,
+      background: c.background,
+      card: c.background,
+      text: c.text,
+      border: c.border,
+      notification: c.negative,
+    },
+  };
+}
 
 function RootNavigator() {
   const { session, isLoading } = useAuth();
@@ -44,11 +64,15 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
+  const scheme = useColorScheme();
+  const navigationTheme = buildNavigationTheme(scheme);
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <RootNavigator />
-      </AuthProvider>
+      <ThemeProvider value={navigationTheme}>
+        <AuthProvider>
+          <RootNavigator />
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
