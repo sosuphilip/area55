@@ -1,8 +1,8 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { ActivityIndicator, StyleSheet } from 'react-native';
-import { useMemo } from 'react';
+import { Stack, useSegments } from 'expo-router';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
@@ -10,6 +10,39 @@ import { AuthProvider, useAuth } from '@/context/auth';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useTheme } from '@/hooks/use-theme';
 import { queryClient } from '@/lib/queryClient';
+
+/**
+ * On web, React Navigation paints a single white frame during screen mounts
+ * before inline styles are applied. This overlay covers the viewport with the
+ * app background colour for two animation frames after each route change,
+ * blocking any transient white paint from reaching the user's eyes.
+ * In dark mode it's invisible (same colour as the background).
+ */
+function FlashGuard() {
+  const segments = useSegments();
+  const theme = useTheme();
+  const [hidden, setHidden] = useState(true);
+  const key = segments.join('/');
+
+  useEffect(() => {
+    setHidden(false);
+    let frames = 0;
+    const tick = () => {
+      frames++;
+      if (frames >= 3) { setHidden(true); return; }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [key]);
+
+  if (hidden) return null;
+  return (
+    <View
+      pointerEvents="none"
+      style={[StyleSheet.absoluteFillObject, { backgroundColor: theme.background }]}
+    />
+  );
+}
 
 function buildNavigationTheme(scheme: 'light' | 'dark') {
   const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
@@ -76,6 +109,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={navigationTheme}>
         <AuthProvider>
+          <FlashGuard />
           <RootNavigator />
         </AuthProvider>
       </ThemeProvider>
