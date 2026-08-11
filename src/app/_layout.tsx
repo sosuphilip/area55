@@ -1,7 +1,7 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, useMemo } from 'react-native';
 
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
@@ -70,7 +70,7 @@ function RootNavigator() {
 
 export default function RootLayout() {
   const scheme = useColorScheme();
-  const navigationTheme = buildNavigationTheme(scheme);
+  const navigationTheme = useMemo(() => buildNavigationTheme(scheme), [scheme]);
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={navigationTheme}>
