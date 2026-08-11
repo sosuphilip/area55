@@ -1,7 +1,8 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
-import { ActivityIndicator, StyleSheet, useMemo } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
+import { useMemo } from 'react';
 
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
