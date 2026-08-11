@@ -21,8 +21,8 @@ import { queryClient } from '@/lib/queryClient';
 function FlashGuard() {
   const segments = useSegments();
   const theme = useTheme();
-  const [hidden, setHidden] = useState(true);
   const key = segments.join('/');
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     setHidden(false);

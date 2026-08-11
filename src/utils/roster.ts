@@ -74,7 +74,10 @@ export function buildRosterRows(
   }
 
   // First pass — composites, and track the squad's best.
+  // Only ONE athlete can be 'leader' — the first one whose composite equals
+  // the max. Ties are broken by roster order so the chip is deterministic.
   let bestComposite: number | null = null;
+  let leaderId: string | null = null;
   for (const a of athletes) {
     const athleteEntries = byAthlete.get(a.id) ?? [];
     const metricIds = new Set(athleteEntries.map((e) => e.metric_id));
@@ -90,6 +93,7 @@ export function buildRosterRows(
     rows.get(a.id)!.composite = composite;
     if (composite != null && (bestComposite == null || composite > bestComposite)) {
       bestComposite = composite;
+      leaderId = a.id;
     }
   }
 
@@ -138,7 +142,7 @@ export function buildRosterRows(
       row.goalMetric = primary.metric;
     }
 
-    if (bestComposite != null && row.composite === bestComposite) {
+    if (a.id === leaderId) {
       row.status = 'leader';
     } else if (row.delta == null) {
       row.status = 'steady';
