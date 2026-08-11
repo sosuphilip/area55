@@ -18,8 +18,13 @@ function buildNavigationTheme(scheme: 'light' | 'dark') {
     colors: {
       ...base.colors,
       primary: c.accent,
-      background: c.background,
-      card: c.background,
+      // Use transparent so the Background component (from @react-navigation/elements)
+      // never paints a solid color — the already-dark body shows through instead.
+      // This prevents the single-frame white flash during screen mounting, because
+      // transparent is the browser default for a new div, matching what React renders
+      // before inline styles are applied.
+      background: 'transparent',
+      card: 'transparent',
       text: c.text,
       border: c.border,
       notification: c.negative,
