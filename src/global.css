@@ -16,14 +16,9 @@ body {
   background-color: #ffffff;
 }
 
-/* Nuclear catch-all: force EVERY element dark in dark mode.  React's inline
-   styles (set by React Native Web) override this for elements that need
-   specific colours, but any DOM node that exists for one frame before
-   React applies its style gets painted dark instead of white. */
 @media (prefers-color-scheme: dark) {
   html,
-  body,
-  * {
+  body {
     background-color: #000000;
   }
 }
